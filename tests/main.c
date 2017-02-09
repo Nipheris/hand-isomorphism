@@ -2,8 +2,9 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include <sys/time.h>
 #include "hand_index.h"
+#include "hand_index-impl.h"
+#include "utils.h"
 
 static uint_fast32_t nth_bit(uint64_t used, uint8_t bit);
 
@@ -161,17 +162,17 @@ int main(int argc, char ** argv) {
 }
 
 static uint8_t nth_bit_[1<<16][16];
-static void __attribute__((constructor)) nth_bit_ctor() {
+INITIALIZER(nth_bit_ctor) {
   for(uint_fast32_t i=0; i<1<<16; ++i) {
     for(uint_fast32_t j=0, set=i; set; ++j, set&=set-1) {
-      nth_bit_[i][j] = __builtin_ctz(set);
+      nth_bit_[i][j] = ctz(set);
     }
   }
 }
 
 static uint_fast32_t nth_bit(uint64_t used, uint8_t bit) {
   for(uint_fast32_t i=0; i<4; ++i) {
-    uint_fast32_t pop = __builtin_popcount(used&0xffff);
+    uint_fast32_t pop = popcount(used&0xffff);
     if (pop > bit) {
       return 16*i + nth_bit_[used&0xffff][bit];
     } else {

@@ -4,6 +4,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include "hand_index.h"
+#include "hand_index-impl.h"
+#include "utils.h"
 
 #define MAX_GROUP_INDEX        0x100000 
 #define MAX_CARDS_PER_ROUND    15
@@ -14,7 +16,7 @@ static uint8_t nth_unset[1<<RANKS][RANKS];
 static bool equal[1<<(SUITS-1)][SUITS];
 static uint_fast32_t nCr_ranks[RANKS+1][RANKS+1], rank_set_to_index[1<<RANKS], index_to_rank_set[RANKS+1][1<<RANKS], (*suit_permutations)[SUITS];
 static hand_index_t nCr_groups[MAX_GROUP_INDEX][SUITS+1];
-static void __attribute__((constructor)) hand_index_ctor() {
+INITIALIZER(hand_index_ctor) {
   for(uint_fast32_t i=0; i<1<<(SUITS-1); ++i) {
     for(uint_fast32_t j=1; j<SUITS; ++j) {
       equal[i][j] = i&1<<(j-1);
@@ -23,7 +25,7 @@ static void __attribute__((constructor)) hand_index_ctor() {
 
   for(uint_fast32_t i=0; i<1<<RANKS; ++i) {
     for(uint_fast32_t j=0, set=~i&(1<<RANKS)-1; j<RANKS; ++j, set&=set-1) {
-      nth_unset[i][j] = set?__builtin_ctz(set):0xff;
+      nth_unset[i][j] = set?ctz(set):0xff;
     }
   }
 
@@ -48,9 +50,9 @@ static void __attribute__((constructor)) hand_index_ctor() {
 
   for(uint_fast32_t i=0; i<1<<RANKS; ++i) {
     for(uint_fast32_t set=i, j=1; set; ++j, set&=set-1) {
-      rank_set_to_index[i]  += nCr_ranks[__builtin_ctz(set)][j];
+      rank_set_to_index[i]  += nCr_ranks[ctz(set)][j];
     }
-    index_to_rank_set[__builtin_popcount(i)][rank_set_to_index[i]] = i;
+    index_to_rank_set[popcount(i)][rank_set_to_index[i]] = i;
   }
 
   uint_fast32_t num_permutations = 1;
@@ -266,7 +268,7 @@ void tabulate_permutations(uint_fast32_t round, uint_fast32_t count[], void * da
   uint_fast32_t pi_idx = 0, pi_mult = 1, pi_used = 0;
   for(uint_fast32_t i=0; i<SUITS; ++i) {
     uint_fast32_t this_bit = 1<<pi[i];
-    uint_fast32_t smaller  = __builtin_popcount((this_bit-1)&pi_used);
+    uint_fast32_t smaller  = popcount((this_bit-1)&pi_used);
     pi_idx  += (pi[i]-smaller)*pi_mult;
     pi_mult *= SUITS-i;
     pi_used |= this_bit;
@@ -425,20 +427,20 @@ hand_index_t hand_index_next_round(const hand_indexer_t * indexer, const uint8_t
     uint_fast32_t rank         = deck_get_rank(cards[i]), suit = deck_get_suit(cards[i]), rank_bit = 1<<rank;
     assert(!(ranks[suit]&rank_bit));
     ranks[suit]               |= rank_bit;
-    shifted_ranks[suit]       |= rank_bit>>__builtin_popcount((rank_bit-1)&state->used_ranks[suit]);
+    shifted_ranks[suit]       |= rank_bit>>popcount((rank_bit-1)&state->used_ranks[suit]);
   }
 
   for(uint_fast32_t i=0; i<SUITS; ++i) {
     assert(!(state->used_ranks[i]&ranks[i])); /* no duplicate cards */
 
-    uint_fast32_t used_size    = __builtin_popcount(state->used_ranks[i]), this_size = __builtin_popcount(ranks[i]);
+    uint_fast32_t used_size    = popcount(state->used_ranks[i]), this_size = popcount(ranks[i]);
     state->suit_index[i]      += state->suit_multiplier[i]*rank_set_to_index[shifted_ranks[i]];
     state->suit_multiplier[i] *= nCr_ranks[RANKS-used_size][this_size];
     state->used_ranks[i]      |= ranks[i];
   }
 
   for(uint_fast32_t i=0, remaining=indexer->cards_per_round[round]; i<SUITS-1; ++i) {
-    uint_fast32_t this_size          = __builtin_popcount(ranks[i]);
+    uint_fast32_t this_size          = popcount(ranks[i]);
     state->permutation_index        += state->permutation_multiplier*this_size;
     state->permutation_multiplier   *= remaining+1;
     remaining                       -= this_size;
@@ -568,7 +570,7 @@ bool hand_unindex(const hand_indexer_t * indexer, uint_fast32_t round, hand_inde
       uint_fast32_t shifted_cards  = index_to_rank_set[n][round_idx], rank_set = 0;
       for(uint_fast32_t k=0; k<n; ++k) {
         uint_fast32_t shifted_card = shifted_cards&-shifted_cards; shifted_cards ^= shifted_card;
-        uint_fast32_t card         = nth_unset[used][__builtin_ctz(shifted_card)]; rank_set |= 1<<card;
+        uint_fast32_t card         = nth_unset[used][ctz(shifted_card)]; rank_set |= 1<<card;
         cards[location[j]++]       = deck_make_card(i, card);
       }
       used |= rank_set;

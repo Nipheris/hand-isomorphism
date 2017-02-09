@@ -96,7 +96,4 @@ hand_index_t hand_index_next_round(const hand_indexer_t * indexer, const uint8_t
  */
 _Bool hand_unindex(const hand_indexer_t * indexer, uint_fast32_t round, hand_index_t index, uint8_t cards[]);
 
-#include "hand_index-impl.h"
-
-
 #endif /* _HAND_INDEX_H_ */
