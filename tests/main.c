@@ -1,4 +1,5 @@
 #include <assert.h>
+#include <stdbool.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -90,16 +91,20 @@ int main(int argc, char ** argv) {
   printf("testing hand-isomorphism...\n");  
 
   hand_indexer_t preflop_indexer;
-  assert(hand_indexer_init(1, (uint8_t[]){2}, &preflop_indexer));
+  bool preflop_indexer_initialized = hand_indexer_init(1, (uint8_t[]){2}, &preflop_indexer);
+  assert(preflop_indexer_initialized);
 
   hand_indexer_t flop_indexer;
-  assert(hand_indexer_init(2, (uint8_t[]){2, 3}, &flop_indexer));
+  bool flop_indexer_initialized = hand_indexer_init(2, (uint8_t[]){2, 3}, &flop_indexer);
+  assert(flop_indexer_initialized);
 
   hand_indexer_t turn_indexer;
-  assert(hand_indexer_init(3, (uint8_t[]){2, 3, 1}, &turn_indexer));
+  bool turn_indexer_initialized = hand_indexer_init(3, (uint8_t[]){2, 3, 1}, &turn_indexer);
+  assert(turn_indexer_initialized);
 
   hand_indexer_t river_indexer;
-  assert(hand_indexer_init(4, (uint8_t[]){2, 3, 1, 1}, &river_indexer));
+  bool river_indexer_initialized = hand_indexer_init(4, (uint8_t[]){2, 3, 1, 1}, &river_indexer);
+  assert(river_indexer_initialized);
 
   printf("sizes:" " %"PRIhand_index " %"PRIhand_index " %"PRIhand_index " %"PRIhand_index "\n",
       river_indexer.round_size[0], river_indexer.round_size[1],
