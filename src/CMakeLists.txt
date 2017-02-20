@@ -23,6 +23,12 @@ target_include_directories(hand-isomorphism
 		${PROJECT_SOURCE_DIR}/include/hand-isomorphism
 )
 
+include(CheckFunctionExists)
+CHECK_FUNCTION_EXISTS(log LOG_EXISTS)
+if(NOT LOG_EXISTS)
+	target_link_libraries(hand-isomorphism m)
+endif()
+
 #set_target_properties(hand-isomorphism PROPERTIES C_STANDARD 99)
 # C_STANDARD target property is only available since CMake 3.1,
 # so we need this workaround to enable C99 on GNU compiler
