@@ -23,6 +23,8 @@ typedef struct hand_indexer_state_s hand_indexer_state_t;
 
 #define PRIhand_index        PRIu64
 
+void hand_index_init();
+
 /**
  * Initialize a hand indexer.  This generates a number of lookup tables and is relatively
  * expensive compared to indexing a hand.

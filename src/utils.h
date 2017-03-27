@@ -22,18 +22,4 @@ static inline uint_fast32_t popcount(uint_fast32_t v) {
 }
 #endif
 
-// Source: http://stackoverflow.com/a/40357538
-#ifdef _MSC_VER
-#define INITIALIZER(f) \
-	static void f();\
-	static int __f1(){f();return 0;}\
-	__pragma(data_seg(".CRT$XIU"))\
-	static int(*__f2) () = __f1;\
-	__pragma(data_seg())\
-	static void f()
-#elif __GNUC__
-#define INITIALIZER(f) \
-	__attribute__((constructor)) static void f()
-#endif
-
 #endif /* _UTILS_H_ */

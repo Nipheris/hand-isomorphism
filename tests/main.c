@@ -87,8 +87,13 @@ void test_random(hand_indexer_t * indexer) {
   }
 }
 
+void nth_bit_ctor();
+
 int main(int argc, char ** argv) {
-  printf("testing hand-isomorphism...\n");  
+  nth_bit_ctor();
+  hand_index_init();
+
+  printf("testing hand-isomorphism...\n");
 
   hand_indexer_t preflop_indexer;
   bool preflop_indexer_initialized = hand_indexer_init(1, (uint8_t[]){2}, &preflop_indexer);
@@ -167,7 +172,7 @@ int main(int argc, char ** argv) {
 }
 
 static uint8_t nth_bit_[1<<16][16];
-INITIALIZER(nth_bit_ctor) {
+static void nth_bit_ctor() {
   for(uint_fast32_t i=0; i<1<<16; ++i) {
     for(uint_fast32_t j=0, set=i; set; ++j, set&=set-1) {
       nth_bit_[i][j] = ctz(set);

@@ -16,7 +16,7 @@ static uint8_t nth_unset[1<<RANKS][RANKS];
 static bool equal[1<<(SUITS-1)][SUITS];
 static uint_fast32_t nCr_ranks[RANKS+1][RANKS+1], rank_set_to_index[1<<RANKS], index_to_rank_set[RANKS+1][1<<RANKS], (*suit_permutations)[SUITS];
 static hand_index_t nCr_groups[MAX_GROUP_INDEX][SUITS+1];
-INITIALIZER(hand_index_ctor) {
+void hand_index_init() {
   for(uint_fast32_t i=0; i<1<<(SUITS-1); ++i) {
     for(uint_fast32_t j=1; j<SUITS; ++j) {
       equal[i][j] = i&1<<(j-1);
