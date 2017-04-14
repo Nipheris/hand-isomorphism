@@ -11,6 +11,7 @@
 #define _DECK_H_
 
 #include <inttypes.h>
+#include "inline.h"
 
 #define SUITS     4
 #define RANKS    13
