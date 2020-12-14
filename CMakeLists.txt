@@ -38,11 +38,3 @@ install(
 	FILES "${CMAKE_CURRENT_BINARY_DIR}/hand-isomorphism-config.cmake" "${CMAKE_CURRENT_BINARY_DIR}/hand-isomorphism-config-version.cmake"
 	DESTINATION ${CMAKECONFIG_INSTALL_DIR}
 )
-
-if(UNIX)
-	set(CPACK_PACKAGE_NAME "lib${PROJECT_NAME}")
-endif()
-set(CPACK_PACKAGE_CONTACT "Stanislav Makarov <nipheris@live.ru>")
-set(CPACK_PACKAGE_VENDOR "Kevin Waugh <waugh@cs.cmu.edu>")
-set(CPACK_WIX_UPGRADE_GUID "{F5CFBC67-77D5-46E1-8E0E-760D4EDFDE1F}")
-include(CPack)
