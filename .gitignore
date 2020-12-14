@@ -1,0 +1,5 @@
+# Visual Studio data folder
+.vs
+
+# Build and install output root folder
+out
