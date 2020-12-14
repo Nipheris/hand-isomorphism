@@ -24,8 +24,6 @@ export(
 	EXPORT hand-isomorphism
 	FILE "hand-isomorphism-targets.cmake"
 )
-# Publish build directory to the package registry
-export(PACKAGE hand-isomorphism)
 
 # Install targets from "hand-isomorphism" export-set
 install(
