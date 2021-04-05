@@ -1,9 +1,13 @@
-﻿cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.0)
 
 project(hand-isomorphism VERSION 0.1.0 LANGUAGES C)
 
+include(CTest)
+
 add_subdirectory(src)
-add_subdirectory(tests)
+if(BUILD_TESTING)
+	add_subdirectory(tests)
+endif()
 
 set(CMAKECONFIG_INSTALL_DIR "share/hand-isomorphism")
 
