@@ -3,3 +3,7 @@
 
 # Build and install output root folder
 out
+
+### Python ###
+# Virtual environment
+/.venv
